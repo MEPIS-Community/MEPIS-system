@@ -824,7 +824,26 @@ void MConfig::eraseDone(int exitCode, QProcess::ExitStatus exitStatus) {
       connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(formatDone(int, QProcess::ExitStatus)));
       // format as zip
       QString cmd = QString("mkdiskimage -4 /dev/%1 0 64 32").arg(formatDiskComboBox->currentText());
-      proc->start(cmd.toAscii());      
+      proc->start(cmd.toAscii());
+    } else if (createEasyRadioButton->isChecked()) {
+      // anticapitalista's 'easy' USB disk creation
+      formatStatusEdit->setText(tr("Preparing ISO file..."));
+      //TODO - check file is writeable
+
+      if (!fileLineEdit->isModified()) { // user hasn't selected anything
+        // ERROR - report that a filename is required. Cannot use CD/DVD as source. Maybe can via 'cat'- TODO?
+        timer->stop();
+        formatProgressBar->setValue(0);
+        setCursor(QCursor(Qt::ArrowCursor));
+        formatStatusEdit->setText(tr("No ISO file defined...failed"));
+        return;
+      }
+      QString cmd = QString("isohybrid %1").arg(fileLineEdit->text());  // fiddle with ISO file
+      system(cmd.toAscii());
+      cmd = QString("dd if=%1 of=%s").arg(fileLineEdit->text().arg(formatDiskComboBox->currentText()));  // write it to usb drive
+      system(cmd.toAscii());
+      // and we're done - I think...
+
     } else {
       // standard usb, add new partition table
       QString cmd = QString("sfdisk /dev/%1").arg(formatDiskComboBox->currentText());
