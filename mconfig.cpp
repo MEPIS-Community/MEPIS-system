@@ -825,34 +825,6 @@ void MConfig::eraseDone(int exitCode, QProcess::ExitStatus exitStatus) {
       // format as zip
       QString cmd = QString("mkdiskimage -4 /dev/%1 0 64 32").arg(formatDiskComboBox->currentText());
       proc->start(cmd.toAscii());
-    } else if (createEasyRadioButton->isChecked()) {
-      // anticapitalista's 'easy' USB disk creation
-      //TODO - check file is writeable
-
-      if (fileLineEdit->text().isEmpty()) { // user hasn't selected anything
-        // ERROR - report that a filename is required. Cannot use CD/DVD as source. Maybe can via 'cat'- TODO?
-        timer->stop();
-        formatProgressBar->setValue(0);
-        setCursor(QCursor(Qt::ArrowCursor));
-        formatStatusEdit->setText(tr("No ISO file defined...failed"));
-        return;
-      }
-      formatStatusEdit->setText(tr("Preparing ISO file..."));
-      QString cmd = QString("isohybrid %1").arg(fileLineEdit->text());  // fiddle with ISO file
-      system(cmd.toAscii());
-      formatStatusEdit->setText(tr("Writing to USB..."));
-      cmd = QString("dd if=%1 of=/dev/%2").arg(fileLineEdit->text()).arg(formatDiskComboBox->currentText());  // write it to usb drive
-      system(cmd.toAscii());
-      // and we're done - I think...
-      system("umount /dev/cdrom");
-      system("umount /dev/cdrom1");
-      timer->stop();
-      formatProgressBar->setValue(0);
-      setCursor(QCursor(Qt::ArrowCursor));
-      formatStatusEdit->setText(tr("Copy system...ok"));
-      QMessageBox::information(0, QString::null,
-        tr("The system has been copied to the USB key. There appears to be no errors. To boot from USB key, usually you have to press a special key when the computer starts. The key will not boot on a Mac computer."));
-
     } else {
       // standard usb, add new partition table
       QString cmd = QString("sfdisk /dev/%1").arg(formatDiskComboBox->currentText());
@@ -912,7 +884,38 @@ void MConfig::formatDone(int exitCode, QProcess::ExitStatus exitStatus) {
 
 //      QMessageBox::information(0, QString::null,
 //      tr("VERY IMPORTANT! Unplug the USB key, then plug it back in, wait a few seconds, then click OK to continue."));
-           
+
+
+      // for the 'easy' method usb drive nedn't be mounted to do it before any mounting is done.
+      if (createEasyRadioButton->isChecked()) {
+        // anticapitalista's 'easy' USB disk creation
+        //TODO - check file is writeable
+
+        if (fileLineEdit->text().isEmpty()) { // user hasn't selected anything
+         // ERROR - report that a filename is required. Cannot use CD/DVD as source. Maybe can via 'cat'- TODO?
+         timer->stop();
+         formatProgressBar->setValue(0);
+         setCursor(QCursor(Qt::ArrowCursor));
+         formatStatusEdit->setText(tr("No ISO file defined...failed"));
+         return;
+        }
+        formatStatusEdit->setText(tr("Preparing ISO file..."));
+        QString cmd = QString("isohybrid %1").arg(fileLineEdit->text());  // fiddle with ISO file
+        system(cmd.toAscii());
+        formatStatusEdit->setText(tr("Writing to USB..."));
+        cmd = QString("dd if=%1 of=/dev/%2").arg(fileLineEdit->text()).arg(formatDiskComboBox->currentText());  // write it to usb drive
+        system(cmd.toAscii());
+        // and we're done - I think...
+        timer->stop();
+        formatProgressBar->setValue(0);
+        setCursor(QCursor(Qt::ArrowCursor));
+        formatStatusEdit->setText(tr("Copy system...ok"));
+        QMessageBox::information(0, QString::null,
+         tr("The system has been copied to the USB key. There appears to be no errors. To boot from USB key, usually you have to press a special key when the computer starts. The key will not boot on a Mac computer."));
+
+      }
+
+
       // mount usb partition
       cmd = QString("/dev/%1").arg(formatDiskComboBox->currentText());
       if (createNewRadioButton->isChecked() && zipCheckBox->isChecked()) {
