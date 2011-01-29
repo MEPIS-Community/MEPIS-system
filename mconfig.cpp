@@ -912,7 +912,7 @@ void MConfig::formatDone(int exitCode, QProcess::ExitStatus exitStatus) {
         formatStatusEdit->setText(tr("Copy system...ok"));
         QMessageBox::information(0, QString::null,
          tr("The system has been copied to the USB key. There appears to be no errors. To boot from USB key, usually you have to press a special key when the computer starts. The key will not boot on a Mac computer."));
-
+        return;
       }
 
 
@@ -943,7 +943,7 @@ void MConfig::formatDone(int exitCode, QProcess::ExitStatus exitStatus) {
         mkdir("/mnt/iso", 0755);
         system("umount /mnt/iso");
         QString cmd = QString("mount -o loop %1 /mnt/iso").arg(fileLineEdit->text());
-	system(cmd.toAscii());
+        system(cmd.toAscii());
         system("/bin/cp -p /mnt/iso/version /mnt/temp");
         proc->start("/bin/cp -a /mnt/iso/boot /mnt/iso/mepis /mnt/temp");	
       }
@@ -1096,7 +1096,7 @@ void MConfig::show() {
 
 void MConfig::on_selectFilePushButton_clicked() {
    QString isoname = QFileDialog::getOpenFileName(this,
-     tr("Choose MEPIS ISO Source"), "~", tr("ISO Files (*.iso)"));
+     tr("Choose MEPIS ISO Source"), "/home", tr("ISO Files (*.iso)"));
    if (!isoname.isNull()) {
      fileLineEdit->setText(isoname);
    }
