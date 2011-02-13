@@ -480,10 +480,10 @@
           <item row="2" column="0">
            <widget class="QRadioButton" name="createNewRadioButton">
             <property name="toolTip">
-             <string>Select to create a bootable MEPIS 8.5 or newer USB key</string>
+             <string>Select to create a bootable USB key with isolinux</string>
             </property>
             <property name="text">
-             <string>Create bootable MEPIS 8.5+ USB key</string>
+             <string>Create isolinux bootable USB key</string>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -538,10 +538,10 @@
           <item row="1" column="0">
            <widget class="QRadioButton" name="createEasyRadioButton">
             <property name="toolTip">
-             <string>Select to create a bootable MEPIS 11 USB key</string>
+             <string>Select to create a bootable USB key with isohybrid</string>
             </property>
             <property name="text">
-             <string>Create bootable MEPIS 11 USB key</string>
+             <string>Create isohybrid bootable USB key</string>
             </property>
             <property name="checked">
              <bool>true</bool>
