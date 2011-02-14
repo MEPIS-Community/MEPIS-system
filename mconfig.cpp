@@ -900,12 +900,18 @@ void MConfig::formatDone(int exitCode, QProcess::ExitStatus exitStatus) {
          return;
         }
         formatStatusEdit->setText(tr("Preparing ISO file..."));
-        QString cmd = QString("isohybrid %1").arg(fileLineEdit->text());  // fiddle with ISO file
+        // copy iso to /tmp to keep original unchanged
+        QString tmpISO = QString("/tmp/isohybrid.iso");
+        QString cmd = QString("cp %1 %2").arg(fileLineEdit->text().arg(tmpISO));
         system(cmd.toAscii());
-        formatStatusEdit->setText(tr("Writing to USB..."));
-        cmd = QString("dd if=%1 of=/dev/%2").arg(fileLineEdit->text()).arg(formatDiskComboBox->currentText());  // write it to usb drive
+        cmd = QString("/usr/bin/isohybrid %1").arg(tmpISO);  // fiddle with ISO file
+        system(cmd.toAscii());
+        //formatStatusEdit->setText(tr("Writing to USB..."));
+        cmd = QString("dd if=%1 of=/dev/%2").arg(tmpISO).arg(formatDiskComboBox->currentText());  // write it to usb drive
         system(cmd.toAscii());
         // and we're done - I think...
+        cmd = QString("rm -f %1").arg(tmpISO);
+        system(cmd.toAscii());
         timer->stop();
         formatProgressBar->setValue(0);
         setCursor(QCursor(Qt::ArrowCursor));
