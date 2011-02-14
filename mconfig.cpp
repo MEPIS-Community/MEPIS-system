@@ -904,9 +904,11 @@ void MConfig::formatDone(int exitCode, QProcess::ExitStatus exitStatus) {
         QString tmpISO = QString("/tmp/isohybrid.iso");
         QString cmd = QString("cp %1 %2").arg(fileLineEdit->text().arg(tmpISO));
         system(cmd.toAscii());
-        cmd = QString("/usr/bin/isohybrid %1").arg(tmpISO);  // fiddle with ISO file
+        // fiddle with ISO file
+        cmd = QString("/usr/bin/isohybrid %1").arg(tmpISO);
         system(cmd.toAscii());
         //formatStatusEdit->setText(tr("Writing to USB..."));
+        // copy ISO to USB
         cmd = QString("dd if=%1 of=/dev/%2").arg(tmpISO).arg(formatDiskComboBox->currentText());  // write it to usb drive
         system(cmd.toAscii());
         // and we're done - I think...
