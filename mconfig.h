@@ -71,6 +71,7 @@ class MConfig : public QDialog, public Ui::MEConfig {
     void formatStart();
     void formatTime();
     void eraseDone(int exitCode, QProcess::ExitStatus exitStatus);
+    void isohybridDone(int exitCode, QProcess::ExitStatus exitStatus);
     void formatDone(int exitCode, QProcess::ExitStatus exitStatus);
     void bootableDone(int exitCode, QProcess::ExitStatus exitStatus);
     void isoDone(int exitCode, QProcess::ExitStatus exitStatus);
